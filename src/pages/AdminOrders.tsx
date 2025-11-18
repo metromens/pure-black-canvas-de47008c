@@ -257,11 +257,11 @@ const AdminOrders = () => {
           const data = results.data as Array<{ courier_id?: string }>;
           
           // Extract courier numbers from CSV
-          const courierNumbers = data
+          const csvCourierNumbers = data
             .filter(row => row.courier_id && row.courier_id.trim())
             .map(row => row.courier_id!.trim());
 
-          if (courierNumbers.length === 0) {
+          if (csvCourierNumbers.length === 0) {
             toast({
               title: "Error",
               description: "No valid courier numbers found in CSV",
@@ -271,8 +271,31 @@ const AdminOrders = () => {
             return;
           }
 
-          // Filter orders that don't have courier numbers
-          const ordersWithoutCourier = orders.filter(order => !order.courierNo);
+          // Get all existing courier numbers from the database
+          const existingCourierNumbers = new Set(
+            orders
+              .filter(order => order.courierNo)
+              .map(order => order.courierNo)
+          );
+
+          // Filter out courier numbers that already exist in database
+          const newCourierNumbers = csvCourierNumbers.filter(
+            courierNo => !existingCourierNumbers.has(courierNo)
+          );
+
+          if (newCourierNumbers.length === 0) {
+            toast({
+              title: "Info",
+              description: "All courier numbers from CSV already exist in the database",
+            });
+            setUploading(false);
+            return;
+          }
+
+          // Filter orders that don't have courier numbers (sorted by creation date for sequential assignment)
+          const ordersWithoutCourier = orders
+            .filter(order => !order.courierNo)
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
           if (ordersWithoutCourier.length === 0) {
             toast({
@@ -284,18 +307,24 @@ const AdminOrders = () => {
           }
 
           // Prepare pending assignments (don't update DB yet)
+          // Assign sequentially from the first unassigned order
           const orderUpdates = ordersWithoutCourier
-            .slice(0, courierNumbers.length)
+            .slice(0, newCourierNumbers.length)
             .map((order, index) => ({
               order_id: order.id,
-              courier_no: courierNumbers[index]
+              courier_no: newCourierNumbers[index]
             }));
 
           setPendingAssignments(orderUpdates);
           
+          const skippedCount = csvCourierNumbers.length - newCourierNumbers.length;
+          const message = skippedCount > 0 
+            ? `${orderUpdates.length} new courier numbers ready to assign (${skippedCount} duplicates skipped). Click "Apply Assignments" to confirm.`
+            : `${orderUpdates.length} courier numbers ready to assign. Click "Apply Assignments" to confirm.`;
+          
           toast({
             title: "CSV Loaded",
-            description: `${orderUpdates.length} courier numbers ready to assign. Click "Apply Assignments" to confirm.`,
+            description: message,
           });
           
           setUploading(false);
