@@ -151,90 +151,30 @@ const Checkout = () => {
 
     setLoading(true);
     try {
-      const { error: configError } = await supabase.rpc('set_current_user_id', {
-        user_id: user?.id
+      // Call checkout edge function
+      const { data, error } = await supabase.functions.invoke('checkout', {
+        body: {
+          userId: user?.id,
+          items: items,
+          billingInfo: billingInfo,
+          saveAddress: true,
+          isNewAddress: selectedAddressId === "new",
+        },
       });
 
-      if (configError) {
-        console.error("Config error:", configError);
-        toast.error("Authentication error. Please try again.");
-        return;
+      if (error) throw error;
+
+      if (data.error) {
+        throw new Error(data.error);
       }
-
-      // Save new address or update existing
-      if (selectedAddressId === "new") {
-        // Save to billing_addresses table
-        const { error: addressError } = await supabase
-          .from("billing_addresses")
-          .insert({
-            user_id: user?.id,
-            name: billingInfo.name,
-            phone: billingInfo.phone,
-            address: billingInfo.address,
-            city: billingInfo.city || null,
-            state: billingInfo.state || null,
-            pincode: billingInfo.pincode || null,
-            is_default: savedAddresses.length === 0, // Set as default if first address
-          });
-
-        if (addressError) {
-          console.error("Error saving address:", addressError);
-        }
-
-        // Also update profile table for first time or when changed
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .update({
-            phone: billingInfo.phone,
-            address: billingInfo.address,
-            city: billingInfo.city || null,
-            state: billingInfo.state || null,
-            pincode: billingInfo.pincode || null,
-          })
-          .eq("id", user?.id);
-
-        if (profileError) {
-          console.error("Error updating profile:", profileError);
-        }
-      }
-
-      // Create order
-      const { data: order, error: orderError } = await supabase
-        .from("orders")
-        .insert({
-          user_id: user?.id,
-          total_amount: getTotalPrice(),
-          status: "pending",
-          billing_name: billingInfo.name,
-          billing_phone: billingInfo.phone,
-          billing_address: `${billingInfo.address}, ${billingInfo.city}, ${billingInfo.state} - ${billingInfo.pincode}`,
-        })
-        .select()
-        .single();
-
-      if (orderError) throw orderError;
-
-      // Create order items
-      const orderItems = items.map((item) => ({
-        order_id: order.id,
-        product_name: item.name,
-        product_price: item.price,
-        quantity: item.quantity,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from("order_items")
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
 
       // Clear cart and navigate to payment
       clearCart();
       toast.success("Order placed successfully!");
-      navigate(`/payment/${order.id}`);
-    } catch (error) {
+      navigate(`/payment/${data.orderId}`);
+    } catch (error: any) {
       console.error("Error placing order:", error);
-      toast.error("Failed to place order");
+      toast.error(error.message || "Failed to place order");
     } finally {
       setLoading(false);
     }
