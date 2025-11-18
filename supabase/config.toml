@@ -1,0 +1,7 @@
+project_id = "wpiqfkzzrfzlvsgxsjbw"
+
+[functions.signup]
+verify_jwt = false
+
+[functions.login]
+verify_jwt = false

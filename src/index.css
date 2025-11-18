@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 5%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 5%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 5%;
+
+    --primary: 0 0% 10%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 5%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 0 0% 10%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 0% 25%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 88%;
+    --input: 0 0% 92%;
+    --ring: 0 0% 10%;
+
+    --radius: 1rem;
+
+    /* Black & White gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 50%, hsl(0 0% 95%) 100%);
+    --gradient-premium: linear-gradient(135deg, hsl(0 0% 10%) 0%, hsl(0 0% 5%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%) 0%, hsl(0 0% 98%) 100%);
+    --gradient-shine: linear-gradient(90deg, transparent, hsla(0, 0%, 0%, 0.03), transparent);
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(0 0% 97%) 0px, transparent 50%),
+                     radial-gradient(at 80% 0%, hsl(0 0% 96%) 0px, transparent 50%),
+                     radial-gradient(at 0% 50%, hsl(0 0% 98%) 0px, transparent 50%);
+    
+    /* Shadows */
+    --shadow-premium: 0 25px 70px -15px hsl(0 0% 0% / 0.15);
+    --shadow-card: 0 4px 16px hsl(0 0% 0% / 0.05);
+    --shadow-hover: 0 12px 40px hsl(0 0% 0% / 0.12), 0 0 0 1px hsl(0 0% 85%);
+    --shadow-glow: 0 0 50px hsl(0 0% 0% / 0.1);
+    --shadow-smooth: 0 2px 8px hsl(0 0% 0% / 0.04);
+
+    /* Grayscale accent variations */
+    --gold: 0 0% 10%;
+    --gold-light: 0 0% 30%;
+    --gold-dark: 0 0% 5%;
+
+    /* Black & White Admin Sidebar */
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 0 0% 10%;
+    --sidebar-accent: 0 0% 20%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 0 0% 98%;
+  }
+
+  .dark {
+    --background: 0 0% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 8%;
+
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 0% 70%;
+    --destructive-foreground: 0 0% 10%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 18%;
+    --ring: 0 0% 90%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 10%) 0%, hsl(0 0% 8%) 50%, hsl(0 0% 6%) 100%);
+    --gradient-premium: linear-gradient(135deg, hsl(0 0% 90%) 0%, hsl(0 0% 70%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 14%) 0%, hsl(0 0% 10%) 100%);
+    --gradient-shine: linear-gradient(90deg, transparent, hsla(0, 0%, 100%, 0.05), transparent);
+    
+    --shadow-premium: 0 20px 60px -15px hsl(0 0% 0% / 0.6);
+    --shadow-card: 0 2px 12px hsl(0 0% 0% / 0.4);
+    --shadow-hover: 0 8px 30px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 40px hsl(0 0% 100% / 0.15);
+
+    /* Black & White Admin Sidebar (Dark Mode) */
+    --sidebar-background: 0 0% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 0 0% 10%;
+    --sidebar-accent: 0 0% 20%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 0 0% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
